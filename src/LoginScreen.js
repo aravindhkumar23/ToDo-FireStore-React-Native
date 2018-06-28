@@ -2,6 +2,8 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, View,Text,Button, Image,TextInput,ActivityIndicator,Alert,AsyncStorage} from 'react-native';
+import firebase from 'react-native-firebase';
+var db = firebase.firestore();
 
 class LoginScreen extends Component {
   constructor(props) {
@@ -29,11 +31,11 @@ class LoginScreen extends Component {
   }
 
   _login(){
-    if(!this.state.isLogin){
-      this.setState({isLogin:true});
-      // return;
-    }
-    this.setState({isLoading:true});
+    // if(!this.state.isLogin){
+    //   this.setState({isLogin:true});
+    //   // return;
+    // }
+    // this.setState({isLoading:true});
     this._goToHome('uuid');
   }
 

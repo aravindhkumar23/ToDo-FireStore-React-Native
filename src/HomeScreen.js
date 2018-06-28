@@ -3,6 +3,8 @@
 import React, {Component} from 'react';
 import {StyleSheet, View,Text, Image,Button,FlatList,AsyncStorage} from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import firebase from 'react-native-firebase';
+var db = firebase.firestore();
 
 
 
@@ -17,19 +19,6 @@ class HomeScreen extends Component {
       title: 'Home Screen',
       headerRight: <Button
           onPress={()=>{
-            firebase.auth().signOut()
-              .then((data) => {
-                AsyncStorage.multiRemove(['isLoggedIn','userId']);
-                const resetAction = NavigationActions.reset({
-                  index: 0,
-                  actions: [NavigationActions.navigate({ routeName: 'Login'})],
-                });
-                navigation.dispatch(resetAction);
-                console.log('logout success');
-              })
-              .catch(function(error) {
-                console.log('home screen logout error',error)
-              })
           }
           }
           title="Sign out"
@@ -44,6 +33,43 @@ class HomeScreen extends Component {
   }
 
   componentDidMount(){
+    this._getToDOList();
+  }
+
+  _getToDOList(){
+    let username= 'aravindh';
+    console.log("******-->");
+    let that = this;
+
+    // //get all todo
+    // db.collection("users").get().then((querySnapshot) => {
+    //   querySnapshot.forEach((doc) => {
+    //     // console.log("doc",doc);
+    //     console.log(`${doc.id} =>`,doc.data());
+    //    that._getCollById(doc.id);
+    //   });
+    // });
+
+    db.collection("users").where("members."+username, "==", true).get().then((querySnapshot) => {
+      let wholeData = [];
+      querySnapshot.forEach((doc) => {
+        // console.log("doc",doc);
+        console.log(`${doc.id} =>`,doc.data());
+        let alldata = doc.data();
+        console.log('all lists',alldata.myCollections);
+        that._getlists(alldata.myCollections[0]);
+
+      });
+    });
+  }
+
+  async _getlists(listname){
+    console.log(listname);
+    //get all ToDO lIst
+    await db.collection("todos/list-1").get().then((querySnapshot) => {
+      console.log('lists ->',querySnapshot.data());
+      return querySnapshot.data();
+    });
   }
 
   render() {
